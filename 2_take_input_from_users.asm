@@ -1,3 +1,5 @@
+; Take input from the user and greet the user,
+
 section .data
         prompt db "Enter your name: " 
         len_prompt equ $ - prompt
