@@ -1,3 +1,5 @@
+; simple 1 byte calculation for not having to loop to print
+
 section .data
         a equ 1
         b equ 8
@@ -11,7 +13,7 @@ section .text
 _start:
         mov rax, b
         sub rax, a
-        add rax, 48
+        add rax, 48 ; adding by 48 to convert the number into ascii
 
         mov [c], rax
 

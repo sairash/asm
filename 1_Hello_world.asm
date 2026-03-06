@@ -1,3 +1,6 @@
+; Just print hello world in std out
+
+
 section .data
         msg db "Hello world", 10 ; 10 is \n 
         len equ $ - msg ; we are getting the len of msg

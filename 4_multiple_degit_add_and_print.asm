@@ -1,3 +1,7 @@
+; program to add multiple degit numbers with print loop
+; inefficient as it is doing syscall on every number loop
+; vary basic
+
 section .data
         a equ 4210
         b equ 1
