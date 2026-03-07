@@ -4,6 +4,8 @@ Learning Assembly and this repo is the collection of assembly language programs 
 ---
 ### Compile:
 
+needs [just](https://github.com/casey/just)
+
 ```sh
 just build "name of the file"
 ```

@@ -1,4 +1,4 @@
-; program to add multiple degit numbers with print loop
+; program to add multiple digit numbers with print loop
 ; inefficient as it is doing syscall on every number loop
 ; vary basic
 
