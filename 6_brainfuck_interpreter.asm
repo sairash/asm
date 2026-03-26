@@ -7,8 +7,9 @@ section .data
 	
 
 section .bss
-	buffer resb 1024
-	stack  resb 1024
+	buffer  resb 1024
+	stack   resb 1024
+	lstack  resq 128  ; loop stack
 
 
 section .text
@@ -31,23 +32,22 @@ panic:
 	mov rdi, 69
 	syscall
 
-	ret
 
 
 no_file_found:
 	write nofile_prompt, len_nofile_prompt
 	call panic
-	ret
 
 
 interpreter:
 	lea rbx, [rel buffer]
 	mov r14, r13
 
+	lea r15, [rel lstack]
 
 	mov rsi, stack
 	
-	mov rbp, 0 ; it'll track the bf loop pointer
+	lea rbp, [rbx + r13] ; end of program = buffer + length
 
 	.loop:
 		cmp r14, 0
@@ -64,7 +64,6 @@ interpreter:
 
 		cmp al, '-'
 		je .sub
-
 
 		cmp al, '>'
 		je .inc
@@ -95,36 +94,51 @@ interpreter:
 
 	.inc:
 		inc rsi
+
+		cmp rsi, stack + 1024 ; making sure that the memory is within the stack frame
+		jae panic
+		
 		jmp .next
 
 	.dec:
+		cmp rsi, stack
+		jbe panic       ; the first operation cannot be < as it will go out of bound
+	
 		dec rsi
 		jmp .next
 
 	.loop_start:
 		cmp byte [rsi], 0
 		je .skip_forward      
-		push rbx              
+
+		mov [r15], rbx
+		add r15, 8         ; push
 		jmp .next
 
 	.loop_end:
 		cmp byte [rsi], 0
 		jne .jump_back        
 
-		pop rbx               
+		sub r15, 8         ; pop
 		jmp .next
 
 	.jump_back:
-		mov rbx, [rsp]        
-		jmp .next
-
+		mov rbx, [r15- 8]  ; peeking
+		sub r15, 8 ; pop
+		mov r14, rbp
+		sub r14, rbx       ; r14 = remaining bytes from current position
+		jmp .loop
 
 
 	.skip_forward:
 		mov rcx, 1
 
 	.skip_loop:
+		cmp r14, 1
+		je panic
+
 		inc rbx
+		dec r14
 
 		mov al, [rbx]
 
