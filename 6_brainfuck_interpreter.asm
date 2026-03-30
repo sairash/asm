@@ -1,5 +1,5 @@
 section .data
-	filename db "input.bf", 0
+	filename db "./input/input.bf", 0
 
 	nofile_prompt db "no input file found", 10
 	len_nofile_prompt equ $ - nofile_prompt
